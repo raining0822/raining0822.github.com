@@ -38,6 +38,6 @@ NotePad++新版中默认使用“UTF-8”的编码，而你安装的JDK，由于
 不论使用哪种办法，思路都是一样的，就是**统一编码**，要清楚中文windows默认使用“GBK”编码，那么安装在中文windows系统上的软件一般直接使用windows系统的编码“GBK”，而[NotePad++][]和[Sublime Text2][]等文本编辑器默认使用“UTF-8”编码，这是造成编码的主要原因。推荐修改编辑器的默认编码和系统保持一致，Linux系统默认编码是“UTF-8”，一般不存在这种乱码。
 
 
-
+[Eclipse]: http://www.eclipse.org/downloads/
 [NotePad++]: http://notepad-plus-plus.org/
 [Sublime Text2]: http://www.sublimetext.com/2

@@ -4,7 +4,7 @@
    <title></title>
    <link href="/atom.xml" rel="self" type="application/atom+xml"/>
    <link href="" rel="alternate" type="text/html" />
-   <updated>2013-09-23T12:00:36+08:00</updated>
+   <updated>2013-09-23T12:04:38+08:00</updated>
    <id></id>
    <author>
      <name></name>
@@ -19,7 +19,7 @@
      <id>http://beiyuu.com/jdk-encoding</id>
      <content type="html">&lt;h2&gt;为什么要手工编码java&lt;/h2&gt;
 
-&lt;p&gt;也可以一开始就使用IDE来学习Java，比如[Eclipse][]，但是这样会让你对java的运行原理掌握很模糊，推荐在刚学习一门知识时，尽量不要使用开发环境，而是使用一个文本编辑器&lt;/p&gt;
+&lt;p&gt;也可以一开始就使用IDE来学习Java，比如&lt;a href=&quot;http://www.eclipse.org/downloads/&quot;&gt;Eclipse&lt;/a&gt;，但是这样会让你对java的运行原理掌握很模糊，推荐在刚学习一门知识时，尽量不要使用开发环境，而是使用一个文本编辑器&lt;/p&gt;
 
 &lt;h2&gt;为什么会乱码&lt;/h2&gt;
 
