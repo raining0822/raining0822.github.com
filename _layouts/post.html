@@ -1,41 +1,66 @@
----
-layout: page
----
-<link rel="stylesheet" href="/js/prettify/prettify.css" />
-<div class="entry">
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+{% include head.html %}
+</head>
 
-    <h1 class="entry-title"><a href="{{ page.url }}" title="{{ page.title }}">{{ page.title }}</a></h1>
-    <p class="entry-date">{{ page.date|date:"%Y-%m-%d" }}</p>
+<body id="post" {% if page.image.feature %}class="feature"{% endif %}>
 
-    {{ content }}
+{% include browser-upgrade.html %}
+{% include navigation.html %}
 
-</div><!-- .entry -->
-<div id="disqus_container">
-    <a href="#" class="right comment" onclick="return false;">点击查看评论</a>
-    <div style="margin-bottom:20px">
-        <script type="text/javascript" charset="utf-8">
-        (function(){
-          var _w = 86 , _h = 16;
-          var param = {
-            url:location.href,
-            type:'6',
-            count:'', /**是否显示分享数，1显示(可选)*/
-            appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-            title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-            pic:'', /**分享图片的路径(可选)*/
-            ralateUid:'1525276717', /**关联用户的UID，分享微博会@该用户(可选)*/
-            language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-            rnd:new Date().valueOf()
-          }
-          var temp = [];
-          for( var p in param ){
-            temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-          }
-          document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-        })()
-        </script>
-    </div>
-    <div id="disqus_thread"></div>
-</div>
+{% if page.image.feature %}
+<div class="entry-header">
+  {% if page.image.credit %}<div class="image-credit">Image source: {% if page.image.creditlink %}<a href="{{ page.image.creditlink }}">{% endif %}{{ page.image.credit }}{% if page.image.creditlink %}</a>{% endif %}</div><!-- /.image-credit -->{% endif %}
+  <div class="entry-image">
+    <img src="{{ site.url }}/images/{{ page.image.feature }}" alt="{{ page.title }}">
+  </div><!-- /.entry-image -->
+</div><!-- /.entry-header -->
+{% endif %}
 
-<script src="/js/post.js" type="text/javascript"></script>
+<div id="main" role="main">
+  <article class="hentry">
+    <header class="header-title">
+      <div class="header-title-wrap">
+        {% if page.link %}
+          <h1 class="entry-title"><i class="fa fa-bookmark permalink"></i> <a href="{{ page.link }}">{{ page.title }}</a></h1>
+        {% else %}
+          <h1 class="entry-title"><a href="{{ site.url }}{{ page.url }}" rel="bookmark" title="{{ page.title }}">{{ page.title }}</a></h1>
+        {% endif %}
+        <h2><span class="entry-date date published"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time></span></h2>
+        {% if site.reading_time %}
+        <p class="entry-reading-time">
+          <i class="fa fa-clock-o"></i>
+          {% assign readtime = content | number_of_words | divided_by:site.words_per_minute %}
+          Reading time ~{% if readtime <= 1 %}1 minute{% else %}{{ readtime }} minutes{% endif %}
+        </p><!-- /.entry-reading-time -->
+        {% endif %}
+      </div><!-- /.header-title-wrap -->
+    </header>
+    <div class="entry-content">
+      {{ content }}
+      <footer class="entry-meta">
+        <span class="entry-tags">{% for tag in page.tags %}<a href="{{ site.url }}/tags/#{{ tag }}" title="Pages tagged {{ tag }}" class="tag"><span class="term">{{ tag }}</span></a>{% unless forloop.last %}{% endunless %}{% endfor %}</span>
+        {% if page.modified %}<span>Updated on <span class="entry-date date updated"><time datetime="{{ page.modified }}">{{ page.modified | date: "%B %d, %Y" }}</time></span></span>
+        <span class="author vcard"><span class="fn">{{ site.owner.name }}</span></span>{% endif %}
+        {% if page.share != false %}{% include social-share.html %}{% endif %}
+      </footer>
+    </div><!-- /.entry-content -->
+    {% if page.comments != false %}<section id="disqus_thread"></section><!-- /#disqus_thread -->{% endif %}
+    {% if site.related_posts.size %}{% include read-more.html %}{% endif %}
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrapper">
+  <footer role="contentinfo">
+    {% include footer.html %}
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+{% include scripts.html %}	        
+
+</body>
+</html>
