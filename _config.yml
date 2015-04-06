@@ -5,7 +5,7 @@ pygments: true
 paginate: 8
 permalink: /:title
 
-title: xuyang21.com
+title: 许洋的个人博客
 url: http://www.xuyang21.com
 feed: /atom.xml
 author_info: <a href="http://www.xuyang21.com">许洋</a>
