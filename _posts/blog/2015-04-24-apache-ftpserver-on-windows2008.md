@@ -1,128 +1,42 @@
 ---
-layout:post
-title:在Window2008上搭建Apache FtpServer
+layout:     post
+title:      设置JDK默认编码
 category: blog
-description: Apache FtpServer，开源的FTP服务器，搭建简单，我一直在用。
+description: 在学习Java的过程中，很多时候我们是使用手工方式来开发的，而不是使用IDE，在windows上使用javac口令编码java源文件和使用java运行字节码文件，有时候会出现乱码问题。
 ---
 
-#在Window2008上搭建 Apache FTPServer
+##为什么要手工编码java
 
-windows2003马上要停止维护了，时间好像是在2015年5月7日。阿里云希望用户能够升级服务器，刚好公司的新项目马上要上线了，所以就尝试了一下将云服务器升级到Windows2008.
+也可以一开始就使用IDE来学习Java，比如[Eclipse][]，但是这样会让你对java的运行原理掌握很模糊，推荐在刚学习一门知识时，尽量不要使用开发环境，而是使用一个文本编辑器
 
-是一个小项目，所以生产环境也比较简单：
+##为什么会乱码
 
-* Java7
-* Tomcat
-* Mysql
-* FTP服务器（选择的Apache FTPServer）
+一般乱码的原因是windows默认编码的原因，由于我们的操作系统是中文，系统会自动识别，然后默认采用中文的编码“GBK”，然后在windows上安装的软件一般都是采用此编码。
+比如你安装了[notepad++][]，用它来编码Java源文件，在任意文件夹下，建立一个空文本，这个文本就会使用windows的默认编码“GBK”，然后使用NotePad++打开它，观察这里：
+![](/images/java-coding/2013-09-23_115411.jpg)
+NotePad++新版中默认使用“UTF-8”的编码，而你安装的JDK，由于中文windows的原因，JDK使用了“GBK”编码，这种情况下，编码不统一了，如果编译和运行Java文件，就会出现乱码：
 
-别的安装没什么说的，和在Windows2003上是一样的。具体说说安装FTP的问题。
+    public class Test{
+	    public static void main(String[] args){
+		    System.out.println("你好");
+	    }
+	}
+结果为：
+![](/images/java-coding/2013-09-23_113846.jpg)
+这种乱码的解决也很简单。
+###第一种办法（推荐）
+也是比较常用的办法，就是修改NotePad++的编码：
+![](/images/java-coding/2013-09-23_114039.jpg)
+将编码设置为：“ANSI”，修改之后，源文件中的中文会乱码，那么你就要重新写一次中文，如果中文较多，推荐先备份一份，然后将备份中的中文拷贝进来。
+###第二种办法
+在编译Java源文件时指定编码：
+	javac -encoding utf8 Test.java
+这样去编译，由于源文件是utf8编码，而JDK是“GBK”编码，现在我们指定JDK使用“UTF8”编码，这样就不会乱码了，但是这样比较麻烦，每次都要指定
+###第三种办法
+修改系统上JDK的默认编码，很简单，在环境变量中，添加一个变量，名称为：“JAVA_TOOL_OPTIONS”，值为：“-Dfile.encoding=UTF-8”，这样就指定了JDK编码为“UTF8”了。
+##总结
+不论使用哪种办法，思路都是一样的，就是**统一编码**，要清楚中文windows默认使用“GBK”编码，那么安装在中文windows系统上的软件一般直接使用windows系统的编码“GBK”，而[NotePad++][]和[Sublime Text2][]等文本编辑器默认使用“UTF-8”编码，这是造成编码的主要原因。推荐修改编辑器的默认编码和系统保持一致，Linux系统默认编码是“UTF-8”，一般不存在这种乱码。
 
-##下载
-
-下载个人建议不管下载什么，都最好去官方下载，特别是开源的项目，Apache FTPServer的下载地址是：[下载][apache-ftpserver]
-
-##安装
-
-安装非常简单，解压就可以了。简单看一下目录：
-
-* res 配置的主要文件夹
-* common Jar包和类
-* bin 工具
-
-我们主要是学习res就可以了，别的不用关心，res的里面的目录：
-
-* conf 该目录下主要存放于FtpServer相关的配置
-* home Ftp服务器上传的文件默认就保存在这里，可以通过配置来修改
-* log 日志
-* 剩下的文件不用太在意
-
-##配置
-
-其实对于全栈工程师来说，不用太纠结于FtpServer的细节，能配置能运行，能帮我们上传文件和下载文件就行了。所以主要是要学会配置。
-
-###conf目录
-
-users.properties，该文件主要是对FtpServer的用户进行配置。
-	
-	#用户名就是admin（可以改），密码明显是加过密的，暂时不用管，一会讲
-    ftpserver.user.admin.userpassword=21232F297A57A5A743894A0E4A801FC3
-	#上传文件的目录
-	ftpserver.user.admin.homedirectory=./res/home
-	#当前用户可用
-	ftpserver.user.admin.enableflag=true
-	#是否具有上传的权限
-	ftpserver.user.admin.writepermission=true
-	#最大登陆数量
-	ftpserver.user.admin.maxloginnumber=0
-	#同IP登陆用户数量
-	ftpserver.user.admin.maxloginperip=0
-	#空闲时间为300秒
-	ftpserver.user.admin.idletime=0
-	#上传速度限制	
-	ftpserver.user.admin.uploadrate=0
-	#下载速度限制
-	ftpserver.user.admin.downloadrate=0
-
-再来看**ftpd-typical.xml**文件，打开这个xml文件，找到Server根目录，默认的Server元素只有一个id属性，给它添加几个属性和值，然后修改端口（不修改也行），修改后的**ftpd-typical.xml**文件为：
-
-    <server xmlns="http://mina.apache.org/ftpserver/spring/v1"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="
-		   http://mina.apache.org/ftpserver/spring/v1 http://mina.apache.org/ftpserver/ftpserver-1.0.xsd	
-		   "
-		id="myServer"
-	    max-logins="20"  
-	    anon-enabled="false"  
-	    max-anon-logins="0"  
-	    max-login-failures="3"  
-	    login-failure-delay="30000"
-		>
-		<listeners>
-			<nio-listener name="default" port="2121">
-			    <ssl>
-	                <keystore file="./res/ftpserver.jks" password="password" />
-	            </ssl>
-			</nio-listener>
-		</listeners>
-		<file-user-manager file="./res/conf/users.properties" encrypt-passwords = "clear" />
-	</server>
-
-修改后，根据属性名可以看到，匿名用户被禁用，而且去掉了密码加密 `encrypt-passwords = "clear"` ，然后修改users.properties中admin的密码，是什么密码就直接设置成什么就行了。到这里配置就完成了。
-
-##运行
-
-运行很简单，如果不考虑将FtpServer安装成系统服务，那么打开命令行，将目录切换到FtpServer的bin目录，然后输入` ftpd.bat res/conf/ftpd-typical.xml`就完成了。
-> 为了方便使用，一般做法是，在bin目录下，建立一个run.bat文件，将刚才的命令拷贝进入，然后把这个批处理文件发送到桌面，以后就直接可以使用了。运行后，如果出现：ftp-server started 的字样，那就成功了。
-
-##问题
-
-我在运行正常后，出现了两个问题（Window2008系统）
-
-1. 这个服务无法访问，说白了就是端口没有开放
-2. 开放端口后，无法读取目录，读写被拦截
-
-###开放端口
-
-这个其实也很简单，主要是你要确认是不是这个原因。一般做法是先查看机器上的端口运行情况：
-
-1. Windows查看所有的端口 `netstat -ano`
-2. 查询指定的端口占用 `netstat -aon|findstr "提示的端口"`
-3. 查询PID对应的进行进程 `tasklist|findstr "PID"`
-4. 然后我们输入命令`taskkill /f /t /im 程序名`即可
-
-确认端口正常，那一般就是防火墙的问题了
-
-###防火墙
-
-`右击我的电脑——管理——配置——高级安全Windows防火墙——入站规则`，然后添加规则，根据提示去填写就行了，FTP也属于TCP，选TCP就行了，别都是“允许”或者“是”就完成了（内网权限，可以在选项卡中设置作用域）。完成以后，发现，客户端可以连接了，但是无法读出目录。应该还是被阻止了，真实一波三折啊。
-
-`控制面板——Windows防火墙——允许程序或功能通过Windows防火墙`，然后点击“允许运行另一程序”，然后浏览，那么问题来了，选择哪个程序呢？对，不是FtpServer，而是Java，因为FtpServer就是Java写的，那么是哪个Java呢？因为JDK里面有一个，JRE里面也有一个，这就要看你的具体环境了，总之是选择一个 `java.exe`。
-
-好了，再用客户端连接一次，OK了！（如果还不行，那就在出站规则里面，再添加规则，把对应的端口再添加一次）
-
-
-
-
-
-[apache-ftpserver]: https://mina.apache.org/ftpserver-project/downloads.html
+[Eclipse]: http://www.eclipse.org/downloads/
+[NotePad++]: http://notepad-plus-plus.org/
+[Sublime Text2]: http://www.sublimetext.com/2
