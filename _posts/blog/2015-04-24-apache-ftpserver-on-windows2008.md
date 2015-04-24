@@ -1,3 +1,10 @@
+---
+layout:post
+title:在Window2008上搭建Apache FtpServer
+category: blog
+description: Apache FtpServer，开源的FTP服务器，搭建简单，我一直在用。
+---
+
 #在Window2008上搭建 Apache FTPServer
 
 windows2003马上要停止维护了，时间好像是在2015年5月7日。阿里云希望用户能够升级服务器，刚好公司的新项目马上要上线了，所以就尝试了一下将云服务器升级到Windows2008.
